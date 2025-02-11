@@ -2,7 +2,7 @@ import yake
 import streamlit as st
 import article_crawl as ac
 
-DEFAUL_KEYWORDS = "mới nhất, hiện đại nhất, độc quyền, duy nhất, hoàn toàn, nhất, hoàn toàn 100%"
+DEFAULT_KEYWORDS = "mới nhất, hiện đại nhất, độc quyền, duy nhất, hoàn toàn, nhất, hoàn toàn 100%"
 
 def main(): 
     st.set_page_config(page_title="Demo Lọc Từ khóa Vi phạm", page_icon="🔍")
@@ -23,12 +23,12 @@ def show_result(url:str, keywords:str, length_keywords_list:str, filtered_option
         st.error("Vui lòng nhập đầy đủ thông tin.")
     else:
         if(not keywords):
-            keywords = DEFAUL_KEYWORDS
+            keywords = DEFAULT_KEYWORDS
         article = ac.crawl_and_clean_article(url=url)
 
         filtered_keywords = [keyword for keyword in keywords.split(",") if keyword.lower().strip() in (article["content"].lower().strip() + " " + article["title"].lower())]
         st.success(f"Kết quả lọc:\n- " + "\n- ".join(filtered_keywords))
-        st.success(f"Từ khóa khác trong bài viết - Yake: \n- " + "\n- ".join(topYake(article, DEFAUL_KEYWORDS.lower().split(", "), filtered=filtered_options, length=length_keywords_list)))
+        # st.success(f"Từ khóa khác trong bài viết - Yake: \n- " + "\n- ".join(topYake(article, DEFAULT_KEYWORDS.lower().split(", "), filtered=filtered_options, length=length_keywords_list)))
 
 def topYake(article, word_list:list[str], length:int=10, filtered:bool=False):
     kw_extractor = yake.KeywordExtractor(lan="vi", top=100)
