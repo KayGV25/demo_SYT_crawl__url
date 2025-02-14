@@ -93,5 +93,5 @@ def __output_csv(articles:list):
     print("CSV file created successfully")
 
 if __name__ == "__main__":
-    urls = ["https://tenten.vn/tin-tuc/selenium-la-gi/", "https://plo.vn/csgt-thong-tin-ban-dau-vu-o-to-khach-bi-lat-o-phu-yen-post833337.html", "https://tapchigiaothong.vn/rao-ban-vinfast-vf3-sau-10-km-nguoi-dung-noi-thang-mot-dieu-183250207203953709.htm", "https://vov.vn/the-gioi/toretsk-ruc-lua-ukraine-tuyen-bo-day-lui-moi-cuoc-tan-cong-cua-nga-tai-day-post1153466.vov"]
+    urls = ["https://thammyviensline.com/tham-vien-sline-su-lua-chon-hoan-hao-cua-ban/", "https://plo.vn/csgt-thong-tin-ban-dau-vu-o-to-khach-bi-lat-o-phu-yen-post833337.html", "https://tapchigiaothong.vn/rao-ban-vinfast-vf3-sau-10-km-nguoi-dung-noi-thang-mot-dieu-183250207203953709.htm", "https://vov.vn/the-gioi/toretsk-ruc-lua-ukraine-tuyen-bo-day-lui-moi-cuoc-tan-cong-cua-nga-tai-day-post1153466.vov"]
     output(crawl_and_clean_articles(urls), title_as_filename=False, csv=False)
