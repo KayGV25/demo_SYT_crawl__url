@@ -13,10 +13,9 @@ def main():
     url = st.text_input("Nhập URL", placeholder="https://www.example.com")
     keywords = st.text_area("Nhập các từ khóa cần lọc", placeholder="violation, spam, malware")
     
-    left_column, mid_column, right_column = st.columns(3, vertical_alignment="center", gap="medium")
-    length_keywords_list = left_column.number_input("Nhập độ dài danh sách kết quả", min_value=1, max_value=50, value=10)
-    filtered_options = mid_column.checkbox("Lọc các từ khóa theo cơ sở dữ liệu", value=True)
-    filter_btn = right_column.button(label="Lọc", on_click=show_result(url=url, keywords=keywords, length_keywords_list=length_keywords_list, filtered_options=filtered_options), use_container_width=True)
+    filter_btn = st.button(label="Lọc", use_container_width=True)
+    if filter_btn:
+        show_result(url=url, keywords=keywords)
 
 def extract_keywords(article: str, keywords: list[str]) -> dict[str, int]:
     keyword_processor = KeywordProcessor()
@@ -28,7 +27,7 @@ def extract_keywords(article: str, keywords: list[str]) -> dict[str, int]:
     
     return keyword_frequency
 
-def show_result(url:str, keywords:str, length_keywords_list:str, filtered_options:bool):
+def show_result(url:str, keywords:str):
     # Kiểm tra nếu URL và từ khóa không được nhập
     if not url:
         st.error("Vui lòng nhập đầy đủ thông tin.")
@@ -43,7 +42,10 @@ def show_result(url:str, keywords:str, length_keywords_list:str, filtered_option
 
         filtered_keywords = extract_keywords(article["title"] + " " + article["content"], keywords)
 
-        st.success("Kết quả lọc <từ khóa>: <số lần xuất hiện>:\n- " + "\n- ".join([f"{kw}: {f}" for kw, f in filtered_keywords.items()]))
+        if len(filtered_keywords) == 0:
+            st.error("Không tìm thấy từ khóa trong bài viết.")
+        else:
+            st.success("Kết quả lọc <từ khóa>: <số lần xuất hiện>:\n- " + "\n- ".join([f"{kw}: {f}" for kw, f in filtered_keywords.items()]))
 
         # st.success(f"Từ khóa khác trong bài viết - Yake: \n- " + "\n- ".join(topYake(article, DEFAULT_KEYWORDS.lower().split(", "), filtered=filtered_options, length=length_keywords_list)))
 
