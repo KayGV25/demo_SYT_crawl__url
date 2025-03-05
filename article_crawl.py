@@ -5,6 +5,7 @@ from newspaper import Article
 class _article:
     title: str
     content: str
+    gpkd: str
 
     def __init__(self, title:str, content:str):
         self.title = title
