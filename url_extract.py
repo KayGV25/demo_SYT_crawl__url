@@ -31,14 +31,28 @@ def show_result(url:str, keywords: list[str]):
         st.error("Vui lòng nhập đầy đủ thông tin.")
     else:
         article = ac.crawl_and_clean_article(url=url)
+
         filtered_keywords = extract_keywords(article["content"], keywords)
+        sentences_with_keywords = get_sentences_with_keywords(article, filtered_keywords.keys())
 
         if len(filtered_keywords) == 0:
             st.error("Không tìm thấy từ khóa trong bài viết.")
         else:
+            # st.subheader("Danh sách câu có chứa từ khóa vi phạm")
+            st.text_area("Danh sách câu có chứa từ khóa vi phạm","- " + "\n- ".join([f"{s}" for s in sentences_with_keywords]), height=300)
             st.success("Kết quả lọc <từ khóa>: <số lần xuất hiện>:\n- " + "\n- ".join([f"{kw}: {f}" for kw, f in filtered_keywords.items()]))
 
         # st.success(f"Từ khóa khác trong bài viết - Yake: \n- " + "\n- ".join(topYake(article, DEFAULT_KEYWORDS.lower().split(", "), filtered=filtered_options, length=length_keywords_list)))
+
+def get_sentences_with_keywords(article: ac._article, keywords: list[str]) -> list[str]:
+    sentences = article["content"].split(". ")
+    sentences_with_keywords = []
+    for sentence in sentences:
+        if any(keyword.lower() in sentence.lower() for keyword in keywords):
+            sentences_with_keywords.append(sentence)
+    return list(set(sentences_with_keywords))
+
+
 
 # def topYake(article, word_list:list[str], length:int=10, filtered:bool=False):
 #     kw_extractor = yake.KeywordExtractor(lan="vi", top=100)
