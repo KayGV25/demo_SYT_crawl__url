@@ -9,3 +9,6 @@
 pip install -r requirements.txt
 streamlit run main.py
 ```
+
+- Deploy testing link: https://kaygv25-demo-syt-crawl--url-main-myttoy.streamlit.app/
+- URL to test filtering: https://thammyviensline.com/tham-vien-sline-su-lua-chon-hoan-hao-cua-ban/
