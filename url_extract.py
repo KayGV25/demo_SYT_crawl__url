@@ -5,7 +5,12 @@ from flashtext import KeywordProcessor
 from collections import Counter
 
 DEFAULT_KEYWORDS = ["mới nhất", "hiện đại nhất", "độc quyền", "duy nhất", "hoàn toàn", "nhất", "hoàn toàn 100%"]
-
+name_keywords = ["tên", "trung tâm", "bệnh viện", "cơ sở", "phòng khám"]
+ADDRESS_KEYWORDS = ["địa chỉ", "trụ sở", "chi nhánh", "cơ sở", "khu vực", "addr", "add", "đ.c", "đc", "đ/c"]
+VIETNAM_CITIES = [
+    "Hà Nội", "HN", "Hồ Chí Minh", "TPHCM", "HCM", "Đà Nẵng", "DN", "ĐN",
+    "Hải Phòng", "HP", "Cần Thơ", "CT", "Nha Trang", "NT", "Vũng Tàu", "VT"
+]
 def main(): 
     # st.set_page_config(page_title="Demo Lọc Từ khóa Vi phạm", page_icon="🔍")
     st.title("Demo Lọc từ khóa vi phạm từ url")
@@ -34,13 +39,29 @@ def show_result(url:str, keywords: list[str]):
 
         filtered_keywords = extract_keywords(article["content"], keywords)
         sentences_with_keywords = get_sentences_with_keywords(article, filtered_keywords.keys())
+        is_violated = article["address"] is None or article["place_name"] is None
 
         if len(filtered_keywords) == 0:
-            st.error("Không tìm thấy từ khóa trong bài viết.")
+            st.success("Không phát hiện vi phạm về từ ngữ cấm (Điều 8, Ý 11).")
         else:
             # st.subheader("Danh sách câu có chứa từ khóa vi phạm")
+            st.subheader("**Vi phạm Điều 8, Ý 11:** Sử dụng từ ngữ cấm hoặc có ý nghĩa tương tự\n")
             st.text_area("Danh sách câu có chứa từ khóa vi phạm","- " + "\n- ".join([f"{s}" for s in sentences_with_keywords]), height=300)
-            st.success("Kết quả lọc <từ khóa>: <số lần xuất hiện>:\n- " + "\n- ".join([f"{kw}: {f}" for kw, f in filtered_keywords.items()]))
+            st.error("Kết quả lọc <từ khóa>: <số lần xuất hiện>:\n- " + "\n- ".join([f"{kw}: {f}" for kw, f in filtered_keywords.items()]))
+        if is_violated:
+            st.write("**Vi phạm Điều 9, Ý 2a:** Thiếu thông tin bắt buộc của cơ sở khám bệnh, chữa bệnh")
+            if article["address"] is None:
+                st.error(" - Địa chỉ không được cung cấp.")
+            if article["place_name"] is None:
+                st.error(" - Tên địa điểm không được cung cấp.")
+        else:
+            st.success("Đã có đầy đủ thông tin bắt buộc (Điều 9, Ý 2a).")
+        
+        st.subheader("Kết quả phân loại:")
+        if is_violated or len(filtered_keywords) > 0:
+            st.error("Sai luật")
+        else:
+            st.success("Đúng luật")
 
         # st.success(f"Từ khóa khác trong bài viết - Yake: \n- " + "\n- ".join(topYake(article, DEFAULT_KEYWORDS.lower().split(", "), filtered=filtered_options, length=length_keywords_list)))
 
@@ -51,7 +72,6 @@ def get_sentences_with_keywords(article: ac._article, keywords: list[str]) -> li
         if any(keyword.lower() in sentence.lower() for keyword in keywords):
             sentences_with_keywords.append(sentence)
     return list(set(sentences_with_keywords))
-
 
 
 # def topYake(article, word_list:list[str], length:int=10, filtered:bool=False):
